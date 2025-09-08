@@ -1,0 +1,6 @@
+@HaleyWorkFlowAPI_HostAddress = http://localhost:5041
+
+GET {{HaleyWorkFlowAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
