@@ -32,10 +32,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="..\..\HaleyLog\Haley.png" Link="Haley.png">
       <PackagePath></PackagePath>
       <Pack>True</Pack>
@@ -54,7 +50,7 @@
     </When>
     <Otherwise>
       <ItemGroup>
-        <PackageReference Include="Haley.Helpers.Web" Version="0.0.37" />
+        <PackageReference Include="Haley.Helpers.Web" Version="0.0.42" />
       </ItemGroup>
     </Otherwise>
   </Choose>
