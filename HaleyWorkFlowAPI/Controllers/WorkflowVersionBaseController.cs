@@ -13,8 +13,14 @@ namespace Haley.Models {
         }
 
         [HttpGet]
-        public async Task<IFeedback> GetVersion([FromQuery] int workflow_id) {
-            return (await _wfRepo.GetVersionAsync(workflow_id));
+        public async Task<IFeedback> GetVersion([FromQuery] int wf_id) {
+            return (await _wfRepo.GetWFVersion(wf_id));
+        }
+
+        [HttpGet]
+        [Route("wf-code")]
+        public async Task<IFeedback> GetVersionByWorkflowCode([FromQuery] int wf_code, [FromQuery] int? source) {
+            return (await _wfRepo.GetWFVersion(wf_code, source ?? 0));
         }
 
         [HttpGet]
@@ -22,7 +28,7 @@ namespace Haley.Models {
         public async Task<IFeedback> GetVersionByGuid([FromQuery] string guid) {
             Guid input = Guid.Empty;
             if (string.IsNullOrWhiteSpace(guid) || !(guid.IsValidGuid(out input) || guid.IsCompactGuid(out input))) return new Feedback(false, "Input is not a valid guid");
-            return (await _wfRepo.GetVersionByGUIDAsync(input));
+            return (await _wfRepo.GetWFVersion(input));
         }
 
         public WorkflowVersionBaseController(IWorkflowRepository wfRepository, IWorkflowEngine wfEngine, ILoggerProvider logprovider) : base(wfRepository,wfEngine, logprovider.CreateLogger(nameof(WorkflowVersionBaseController))) {
