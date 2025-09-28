@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFrameworks>net8.0</TargetFrameworks>
@@ -20,12 +20,18 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageReleaseNotes>Pilot release</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/TheHaleyProject/HaleyHelpers.Web</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/TheHaleyProject/HaleyHelpers.Web</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/TheHaleyProject/HaleyWorkFlow.API</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/TheHaleyProject/HaleyWorkFlow.API</RepositoryUrl>
     <OpenApiGenerateDocuments>false</OpenApiGenerateDocuments>
     <Description>API Encapsulation for Haley Workflow library</Description>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\wfengine.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.4" />
@@ -41,6 +47,22 @@
   <Import Project="$(SolutionDir)ProjectReferences_$(SolutionName).txt" Condition="Exists('$(SolutionDir)ProjectReferences_$(SolutionName).txt')" />
 
   <Choose>
+    <When Condition="Exists($(HaleyHelpersDB))">
+      <ItemGroup>
+        <ProjectReference Include="$(HaleyHelpersDB)\HaleyHelpersDB.csproj">
+          <Name>HaleyHelpersDB</Name>
+        </ProjectReference>
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup>
+        <PackageReference Include="Haley.Helpers.DB" Version="0.0.35" />
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
+  
+  
+  <Choose>
     <When Condition="Exists($(HaleyHelpersWeb))">
       <ItemGroup>
         <ProjectReference Include="$(HaleyHelpersWeb)\HaleyHelpersWeb.csproj">
@@ -55,17 +77,18 @@
     </Otherwise>
   </Choose>
 
+
   <Choose>
-    <When Condition="Exists($(HaleyWorkFlow))">
+    <When Condition="Exists($(HaleyWorkFlowBase))">
       <ItemGroup>
-        <ProjectReference Include="$(HaleyWorkFlow)\HaleyWorkFlow.csproj">
-          <Name>HaleyWorkFlow</Name>
+        <ProjectReference Include="$(HaleyWorkFlowBase)\HaleyWorkFlowBase.csproj">
+          <Name>HaleyWorkFlowBase</Name>
         </ProjectReference>
       </ItemGroup>
     </When>
     <Otherwise>
       <ItemGroup>
-        <PackageReference Include="Haley.WorkFlow" Version="0.0.1" />
+        <PackageReference Include="Haley.WorkFlow.Base" Version="0.0.1" />
       </ItemGroup>
     </Otherwise>
   </Choose>
