@@ -11,7 +11,7 @@ namespace Haley.Models {
 
         [HttpPost("register")]
         public virtual async Task<IActionResult> Register([FromBody] EngineRegistrationRequest request) {
-            if (string.IsNullOrWhiteSpace(request.EngineId) || string.IsNullOrWhiteSpace(request.Environment))
+            if (string.IsNullOrWhiteSpace(request.EngineId) || request.Environment < 1)
                 return BadRequest(new Feedback(false, "EngineId and Environment are required."));
 
             // Persist or upsert engine row (expects repo support)
@@ -34,7 +34,7 @@ namespace Haley.Models {
 
         [HttpGet("active")]
         public virtual async Task<IActionResult> GetActiveEngines() {
-            var engines = await _wfRepo.LoadActiveEnginesAsync();
+            var engines = await _wfRepo.LoadActiveEnginesAsync(1);
             return Ok(engines);
         }
     }

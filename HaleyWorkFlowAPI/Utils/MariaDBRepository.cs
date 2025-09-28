@@ -341,44 +341,62 @@ namespace Haley.Utils {
                 [LAST_BEAT] = DateTime.UtcNow
             };
 
-            await ExecuteAsync(QRY_ENGINE.REGISTER, parameters);
+            await _agw.NonQuery(parameters.ToAdapterArgs(QRY_ENGINE.INSERT));
         }
 
         public async Task UpdateEngineHeartbeatAsync(string guid, DateTime timestamp) {
-            var parameters = new Dictionary<string, object> {
-                [GUID] = guid,
-                [LAST_BEAT] = timestamp
-            };
-
-            await ExecuteAsync(QRY_ENGINE.HEARTBEAT, parameters);
+            await _agw.NonQuery(
+                new AdapterArgs { Query = QRY_ENGINE.UPDATE_BEAT_BY_GUID },
+                (GUID, guid),
+                (LAST_BEAT, timestamp)
+            );
         }
 
         public async Task<IEnumerable<WorkflowEngineEntity>> LoadActiveEnginesAsync(int environment, TimeSpan? heartbeatThreshold = null) {
             var cutoff = DateTime.UtcNow - (heartbeatThreshold ?? TimeSpan.FromMinutes(2));
 
-            var parameters = new Dictionary<string, object> {
-                [ENVIRONMENT] = environment,
-                [LAST_BEAT] = cutoff
-            };
+            var result = await _agw.Read(
+                new AdapterArgs { Query = QRY_ENGINE.SELECT_BY_ENVIRONMENT },
+                (ENVIRONMENT, environment)
+            );
 
-            return await QueryAsync<WorkflowEngineEntity>(QRY_ENGINE.LOAD_ACTIVE, parameters);
+            // You can filter by cutoff in SQL if you extend QRY_ENGINE, or filter here in C#
+            return (result as IEnumerable<Dictionary<string, object>> ?? new List<Dictionary<string, object>>())
+                .Select(dic => new WorkflowEngineEntity {
+                    Id = Convert.ToInt32(dic["id"]),
+                    Guid = dic["guid"].ToString(),
+                    Environment = Convert.ToInt32(dic["environment"]),
+                    LastBeat = Convert.ToDateTime(dic["last_beat"]),
+                    Status = Convert.ToInt32(dic["status"])
+                })
+                .Where(e => e.LastBeat >= cutoff && e.Status == 1);
         }
 
         public async Task<WorkflowEngineEntity?> LoadEngineByGuidAsync(string guid) {
-            var parameters = new Dictionary<string, object> {
-                [GUID] = guid
-            };
+            var result = await _agw.Read(
+                new AdapterArgs { Query = QRY_ENGINE.SELECT_BY_GUID, Filter = ResultFilter.FirstDictionary },
+                (GUID, guid)
+            );
 
-            return (await QueryAsync<WorkflowEngineEntity>(QRY_ENGINE.LOAD_BY_GUID, parameters)).FirstOrDefault();
+            if (result is Dictionary<string, object> dic && dic.Count > 0) {
+                return new WorkflowEngineEntity {
+                    Id = Convert.ToInt32(dic["id"]),
+                    Guid = dic["guid"].ToString(),
+                    Environment = Convert.ToInt32(dic["environment"]),
+                    LastBeat = Convert.ToDateTime(dic["last_beat"]),
+                    Status = Convert.ToInt32(dic["status"])
+                };
+            }
+            return null;
         }
 
         public async Task RetireEngineAsync(string guid) {
-            var parameters = new Dictionary<string, object> {
-                [GUID] = guid
-            };
-
-            await ExecuteAsync(QRY_ENGINE.RETIRE, parameters);
+            await _agw.NonQuery(
+                new AdapterArgs { Query = QRY_ENGINE.MARK_DEAD_BY_GUID },
+                (GUID, guid)
+            );
         }
+
 
     }
 }
