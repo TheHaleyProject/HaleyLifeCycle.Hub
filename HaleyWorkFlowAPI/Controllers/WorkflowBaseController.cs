@@ -28,21 +28,21 @@ namespace Haley.Models {
             return payload;
         }
 
-        [HttpPost]
-        [Route("start/code")]
-        public async Task<IFeedback> StartWorkflow([FromQuery] int code, [FromQuery] int? source, [FromBody] object? data = null) {
-            var payload = PrepareWFPayload(data);
-            return (await _wfEngine.StartWorkflow(code, source ?? 0, payload)).AsFeedBack();
-        }
+        //[HttpPost]
+        //[Route("start/code")]
+        //public async Task<IFeedback> StartWorkflow([FromQuery] int code, [FromQuery] int? source, [FromBody] object? data = null) {
+        //    var payload = PrepareWFPayload(data);
+        //    return (await _wfEngine.StartWorkflow(code, source ?? 0, payload)).AsFeedBack();
+        //}
 
-        [HttpPost]
-        [Route("start/guid")]
-        public async Task<IFeedback> StartWorkflow([FromQuery] Guid guid, [FromBody] object? data = null) {
-            var payload = PrepareWFPayload(data);
-            return (await _wfEngine.StartWorkflow(guid, payload)).AsFeedBack();
-        }
+        //[HttpPost]
+        //[Route("start/guid")]
+        //public async Task<IFeedback> StartWorkflow([FromQuery] Guid guid, [FromBody] object? data = null) {
+        //    var payload = PrepareWFPayload(data);
+        //    return (await _wfEngine.StartWorkflow(guid, payload)).AsFeedBack();
+        //}
 
-        public WorkflowBaseController(IWorkflowRepository wfRepository, IWorkflowEngine wfEngine, ILoggerProvider logprovider) : base(wfRepository,wfEngine, logprovider.CreateLogger(nameof(WorkflowBaseController))) {
+        public WorkflowBaseController(IWorkflowRepository wfRepository,  ILoggerProvider logprovider) : base(wfRepository,logprovider.CreateLogger(nameof(WorkflowBaseController))) {
            
         }
     }

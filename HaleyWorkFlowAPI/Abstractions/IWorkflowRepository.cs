@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Haley.Abstractions {
     public interface IWorkflowRepository {
-        // --- App Source --
+        // --- App Source ---
         Task<IFeedback<Dictionary<string, object>>> CreateOrGetAppSourceAsync(int code, string name);
 
         // --- Workflow (root entity) ---
@@ -35,13 +35,24 @@ namespace Haley.Abstractions {
         Task<WorkflowInstance> LoadInstanceAsync(Guid instanceGuid);
         Task UpdateInstanceAsync(WorkflowInstance instance);
 
+        // New: Claiming & Orphan Recovery
+        Task<IEnumerable<WorkflowInstance>> LoadPendingInstancesAsync(string environment, int limit = 10);
+        Task<bool> ClaimInstanceAsync(Guid instanceGuid, int engineId);
+        Task<IEnumerable<WorkflowInstance>> LoadOrphanedInstancesAsync(string environment);
+
         // --- Workflow State ---
         Task<WorkflowState> LoadStateAsync(Guid instanceGuid);
         Task UpdateStateAsync(Guid instanceGuid, WorkflowState state);
 
-        // --- Logs / Steps (optional, can be split into separate repos) ---
+        // --- Logs / Steps ---
         Task<IEnumerable<WorkflowStep>> LoadStepsAsync(Guid instanceGuid);
         Task<IEnumerable<StepLog>> LoadLogsAsync(Guid instanceGuid);
         Task AddStepLogAsync(StepLog log);
+
+        Task RegisterEngineAsync(string guid, string environment);
+        Task UpdateEngineHeartbeatAsync(string guid, DateTime timestamp);
+        Task<IEnumerable<WorkflowEngineEntity>> LoadActiveEnginesAsync();
+        Task<WorkflowEngineEntity?> LoadEngineByGuidAsync(string guid);
+        Task RetireEngineAsync(string guid);
     }
 }

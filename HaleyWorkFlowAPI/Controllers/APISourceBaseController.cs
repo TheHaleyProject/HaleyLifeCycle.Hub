@@ -12,7 +12,7 @@ namespace Haley.Models {
            return (await _wfRepo.CreateOrGetAppSourceAsync(code, name)).AsFeedBack();
         }
 
-        public APISourceBaseController(IWorkflowRepository wfRepository, IWorkflowEngine wfEngine, ILoggerProvider logprovider) : base(wfRepository,wfEngine, logprovider.CreateLogger(nameof(APISourceBaseController))) {
+        public APISourceBaseController(IWorkflowRepository wfRepository, ILoggerProvider logprovider) : base(wfRepository, logprovider.CreateLogger(nameof(APISourceBaseController))) {
            
         }
     }

@@ -21,10 +21,6 @@ namespace Haley.Utils {
             if (_agw == null) throw new ArgumentNullException($@"{nameof(IAdapterGateway)} cannot be empty for this operation.");
         }
 
-        public Task AddStepLogAsync(StepLog log) {
-            throw new NotImplementedException();
-        }
-
         public async Task<IFeedback<Guid>> CreateVersionAsync(int workflowId, string definitionJson) {
             var fb = new Feedback<Guid>();
             try {
@@ -65,7 +61,6 @@ namespace Haley.Utils {
                 return fb.SetStatus(false).SetMessage(ex.Message);
             }
         }
-
         public async Task<IFeedback<Dictionary<string, object>>> CreateOrGetWorkflow(int code, string name, int source =0) {
             var fb = new Feedback<Dictionary<string, object>>();
             try {
@@ -89,7 +84,6 @@ namespace Haley.Utils {
                 return fb.SetStatus(false).SetMessage(ex.Message);
             }
         }
-
         public async Task UpdateWorkflow( int code, string name, int source =0) {
             var affected = await _agw.NonQuery(
                 new AdapterArgs { Query = QRY_WORKFLOW.UPDATE },
@@ -98,14 +92,8 @@ namespace Haley.Utils {
                 (NAME, name)
             );
         }
-
         public async Task DeleteWorkflowAsync(int code) {
             await _agw.NonQuery(new AdapterArgs() { Query = QRY_WORKFLOW.DELETE }, (CODE, code));
-        }
-
-
-        public Task<IEnumerable<WorkflowDefinition>> LoadAllWorkflowsAsync() {
-            throw new NotImplementedException();
         }
 
         public async Task<IFeedback<Dictionary<string, object>>> CreateOrGetAppSourceAsync(int code, string name) {
@@ -185,38 +173,6 @@ namespace Haley.Utils {
             return fb.SetStatus(false).SetMessage($"Unable to fetch the Guid for the given inputs, code {code} and source {source}.");
         }
 
-        public Task<WorkflowInstance> LoadInstanceAsync(Guid instanceGuid) {
-            throw new NotImplementedException();
-        }
-
-        public Task<WorkflowDefinition> LoadLatestVersionAsync(int workflowId) {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<StepLog>> LoadLogsAsync(Guid instanceGuid) {
-            throw new NotImplementedException();
-        }
-
-        public Task<WorkflowState> LoadStateAsync(Guid instanceGuid) {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<WorkflowStep>> LoadStepsAsync(Guid instanceGuid) {
-            throw new NotImplementedException();
-        }
-
-        public Task<WorkflowDefinition> LoadVersionAsync(Guid versionGuid) {
-            throw new NotImplementedException();
-        }
-
-        public Task<WorkflowDefinition> LoadWorkflowAsync(int id) {
-            throw new NotImplementedException();
-        }
-
-        public Task MarkVersionAsPublishedAsync(Guid versionGuid) {
-            throw new NotImplementedException();
-        }
-
         public async Task<int> GetVersionIdByDefinitionGuidAsync(Guid versionGuid) {
             if (versionGuid == Guid.Empty) return 0;
             var result = await _agw.Scalar(new AdapterArgs { Query = QRY_WF_VERSION.SELECT_ID_BY_GUID },(GUID, versionGuid));
@@ -245,7 +201,7 @@ namespace Haley.Utils {
                     { "@STATUS", (int)instance.State }
                 };
 
-            var result = await _agw.Scalar(parameters.ToAdapterArgs(QRY_WF_INSTANCE.INSERT));
+            var result = await _agw.Scalar(parameters.ToAdapterArgs(QRY_WFINSTANCE.INSERT_INSTANCE));
             if (result == null || !long.TryParse(result.ToString(), out long newId))
                 return fb.SetStatus(false).SetMessage("Failed to insert wf_instance.");
 
@@ -257,7 +213,7 @@ namespace Haley.Utils {
         { "@WFI", newId },
         { "@PARAMETERS", JsonSerializer.Serialize(instance.Parameters ?? new()) },
         { "@URL_OVERRIDES", JsonSerializer.Serialize(instance.Urls ?? new()) }
-    }.ToAdapterArgs(QRY_WF_INFO.INSERT));
+    }.ToAdapterArgs(QRY_WFINSTANCE.INSERT_INFO));
 
             // Save wfi_belongs_to (if Reference is present)
             if (!string.IsNullOrWhiteSpace(instance.Reference)) {
@@ -267,19 +223,10 @@ namespace Haley.Utils {
             { "@SOURCE", instance.Owner },
             { "@OWNER", instance.Owner },
             { "@REF", instance.Reference }
-        }.ToAdapterArgs(QRY_WFI_BELONGS_TO.INSERT));
+        }.ToAdapterArgs(QRY_WFINSTANCE.INSERT_BELONGS_TO));
             }
 
             return fb.SetStatus(true).SetResult(newId);
-        }
-
-
-        public Task UpdateInstanceAsync(WorkflowInstance instance) {
-            throw new NotImplementedException();
-        }
-
-        public Task UpdateStateAsync(Guid instanceGuid, WorkflowState state) {
-            throw new NotImplementedException();
         }
 
         public async Task<IFeedback> GetWFVersion(int workflowId) {
@@ -320,6 +267,117 @@ namespace Haley.Utils {
             if (result is Dictionary<string, object> dic && dic.Count > 0) return fb.SetStatus(true).SetResult(dic);
 
             return fb.SetStatus(false).SetMessage($"No version found for workflow code {wf_code} and source {source}.");
+        }
+
+        public Task<WorkflowDefinition> LoadWorkflowAsync(int id) {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<WorkflowDefinition>> LoadAllWorkflowsAsync() {
+            throw new NotImplementedException();
+        }
+
+        public Task<WorkflowDefinition> LoadVersionAsync(Guid versionGuid) {
+            throw new NotImplementedException();
+        }
+
+        public Task<WorkflowDefinition> LoadLatestVersionAsync(int workflowId) {
+            throw new NotImplementedException();
+        }
+
+        public Task MarkVersionAsPublishedAsync(Guid versionGuid) {
+            throw new NotImplementedException();
+        }
+
+        Task IWorkflowRepository.SaveInstanceAsync(WorkflowInstance instance) {
+            return SaveInstanceAsync(instance);
+        }
+
+        public Task<WorkflowInstance> LoadInstanceAsync(Guid instanceGuid) {
+            throw new NotImplementedException();
+        }
+
+        public Task UpdateInstanceAsync(WorkflowInstance instance) {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<WorkflowInstance>> LoadPendingInstancesAsync(string environment, int limit = 10) {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> ClaimInstanceAsync(Guid instanceGuid, int engineId) {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<WorkflowInstance>> LoadOrphanedInstancesAsync(string environment) {
+            throw new NotImplementedException();
+        }
+
+        public Task<WorkflowState> LoadStateAsync(Guid instanceGuid) {
+            throw new NotImplementedException();
+        }
+
+        public Task UpdateStateAsync(Guid instanceGuid, WorkflowState state) {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<WorkflowStep>> LoadStepsAsync(Guid instanceGuid) {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<StepLog>> LoadLogsAsync(Guid instanceGuid) {
+            throw new NotImplementedException();
+        }
+
+        public Task AddStepLogAsync(StepLog log) {
+            throw new NotImplementedException();
+        }
+
+        public async Task RegisterEngineAsync(string guid, int environment) {
+            var parameters = new Dictionary<string, object> {
+                [GUID] = guid,
+                [ENVIRONMENT] = environment,
+                [STATUS] = 1,
+                [LAST_BEAT] = DateTime.UtcNow
+            };
+
+            await ExecuteAsync(QRY_ENGINE.REGISTER, parameters);
+        }
+
+        public async Task UpdateEngineHeartbeatAsync(string guid, DateTime timestamp) {
+            var parameters = new Dictionary<string, object> {
+                [GUID] = guid,
+                [LAST_BEAT] = timestamp
+            };
+
+            await ExecuteAsync(QRY_ENGINE.HEARTBEAT, parameters);
+        }
+
+        public async Task<IEnumerable<WorkflowEngineEntity>> LoadActiveEnginesAsync(int environment, TimeSpan? heartbeatThreshold = null) {
+            var cutoff = DateTime.UtcNow - (heartbeatThreshold ?? TimeSpan.FromMinutes(2));
+
+            var parameters = new Dictionary<string, object> {
+                [ENVIRONMENT] = environment,
+                [LAST_BEAT] = cutoff
+            };
+
+            return await QueryAsync<WorkflowEngineEntity>(QRY_ENGINE.LOAD_ACTIVE, parameters);
+        }
+
+        public async Task<WorkflowEngineEntity?> LoadEngineByGuidAsync(string guid) {
+            var parameters = new Dictionary<string, object> {
+                [GUID] = guid
+            };
+
+            return (await QueryAsync<WorkflowEngineEntity>(QRY_ENGINE.LOAD_BY_GUID, parameters)).FirstOrDefault();
+        }
+
+        public async Task RetireEngineAsync(string guid) {
+            var parameters = new Dictionary<string, object> {
+                [GUID] = guid
+            };
+
+            await ExecuteAsync(QRY_ENGINE.RETIRE, parameters);
         }
 
     }

@@ -31,7 +31,7 @@ namespace Haley.Models {
             return (await _wfRepo.GetWFVersion(input));
         }
 
-        public WorkflowVersionBaseController(IWorkflowRepository wfRepository, IWorkflowEngine wfEngine, ILoggerProvider logprovider) : base(wfRepository,wfEngine, logprovider.CreateLogger(nameof(WorkflowVersionBaseController))) {
+        public WorkflowVersionBaseController(IWorkflowRepository wfRepository,  ILoggerProvider logprovider) : base(wfRepository, logprovider.CreateLogger(nameof(WorkflowVersionBaseController))) {
            
         }
     }
