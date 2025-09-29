@@ -344,11 +344,11 @@ namespace Haley.Utils {
             await _agw.NonQuery(parameters.ToAdapterArgs(QRY_ENGINE.INSERT));
         }
 
-        public async Task UpdateEngineHeartbeatAsync(string guid, DateTime timestamp) {
+        public async Task UpdateEngineHeartbeatAsync(string guid) {
             await _agw.NonQuery(
                 new AdapterArgs { Query = QRY_ENGINE.UPDATE_BEAT_BY_GUID },
                 (GUID, guid),
-                (LAST_BEAT, timestamp)
+                (LAST_BEAT, DateTime.UtcNow)
             );
         }
 

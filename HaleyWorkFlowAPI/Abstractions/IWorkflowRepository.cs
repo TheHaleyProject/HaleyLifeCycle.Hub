@@ -50,7 +50,7 @@ namespace Haley.Abstractions {
         Task AddStepLogAsync(StepLog log);
 
         Task RegisterEngineAsync(string guid, int environment);
-        Task UpdateEngineHeartbeatAsync(string guid, DateTime timestamp);
+        Task UpdateEngineHeartbeatAsync(string guid);
         Task<IEnumerable<WorkflowEngineEntity>> LoadActiveEnginesAsync(int environment, TimeSpan? heartbeatThreshold = null);
         Task<WorkflowEngineEntity?> LoadEngineByGuidAsync(string guid);
         Task RetireEngineAsync(string guid);
