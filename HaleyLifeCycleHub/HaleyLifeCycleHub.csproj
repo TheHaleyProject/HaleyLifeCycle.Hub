@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <OutputType>Library</OutputType>
     <RootNamespace>Haley</RootNamespace>
-    <AssemblyName>Haley.WorkFlow.API</AssemblyName>
+    <AssemblyName>Haley.LifeCycle.Hub</AssemblyName>
     <Authors>TheHaleyProject</Authors>
     <Company>TheHaleyProject</Company>
     <Copyright>Haley 2025</Copyright>
@@ -20,8 +20,8 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageReleaseNotes>Pilot release</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/TheHaleyProject/HaleyWorkFlow.Hub</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/TheHaleyProject/HaleyWorkFlow.Hub</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/TheHaleyProject/HaleyLifeCycle.Hub</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/TheHaleyProject/HaleyLifeCycle.Hub</RepositoryUrl>
     <OpenApiGenerateDocuments>false</OpenApiGenerateDocuments>
     <Description>API Encapsulation for Haley Workflow library</Description>
     <RepositoryType>git</RepositoryType>
@@ -79,16 +79,16 @@
 
 
   <Choose>
-    <When Condition="Exists($(HaleyWorkFlowBase))">
+    <When Condition="Exists($(HaleyLifeCycleBase))">
       <ItemGroup>
-        <ProjectReference Include="$(HaleyWorkFlowBase)\HaleyWorkFlowBase.csproj">
-          <Name>HaleyWorkFlowBase</Name>
+        <ProjectReference Include="$(HaleyLifeCycleBase)\HaleyLifeCycleBase.csproj">
+          <Name>HaleyLifeCycleBase</Name>
         </ProjectReference>
       </ItemGroup>
     </When>
     <Otherwise>
       <ItemGroup>
-        <PackageReference Include="Haley.WorkFlow.Base" Version="0.0.1" />
+        <PackageReference Include="Haley.LifeCycle.Base" Version="0.0.1" />
       </ItemGroup>
     </Otherwise>
   </Choose>
