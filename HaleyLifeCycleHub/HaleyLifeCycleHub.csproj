@@ -20,8 +20,8 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageReleaseNotes>Pilot release</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/TheHaleyProject/HaleyWorkFlow.API</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/TheHaleyProject/HaleyWorkFlow.API</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/TheHaleyProject/HaleyWorkFlow.Hub</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/TheHaleyProject/HaleyWorkFlow.Hub</RepositoryUrl>
     <OpenApiGenerateDocuments>false</OpenApiGenerateDocuments>
     <Description>API Encapsulation for Haley Workflow library</Description>
     <RepositoryType>git</RepositoryType>
